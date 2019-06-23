@@ -1,15 +1,72 @@
-//
-//  main.cpp
-//  Competitor's result
-//
-//  Created by W20181105881 on 2019/6/20.
-//  Copyright © 2019 W20181105881. All rights reserved.
-//
-
 #include <iostream>
+#include <fstream>
+using namespace std;
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
-    return 0;
+ifstream win("/Users/WT20181105881/Desktop/tin.txt");
+ifstream jin("/Users/WT20181105881/Desktop/fin.txt");
+ofstream wout("/Users/WT20181105881/Desktop/tout.txt");
+
+class Person{
+    string school,num,name,judge[7];
+    double score[7]={0};
+public:
+    double sum=0,max=0,min=0,average=0;
+    Person(string s,string nu,string na);
+    ~Person();
+    void display();
+    
+};
+
+void Person::display(){
+    wout<<school<<" "<<num<<" "<<name<<endl;
+    for(int i=0;i<7;i++){
+        wout<<judge[i]<<" "<<score[i];
+        if(i!=6)    wout<<" ";
+    }
+    wout<<endl;
+        wout<<name<<"的平均分为"<<average<<endl;
+}
+
+Person::Person(string s,string nu,string na):school(s),num(nu),name(na){
+    for(int i=0;i<7;i++){
+        jin>>judge[i];
+        jin>>score[i];
+        sum+=score[i];
+        if(i==0){
+            max=score[i];
+            min=score[i];
+        }
+        else{
+            if(score[i]>max) max=score[i];
+            if(score[i]<min) min=score[i];
+        }
+    }
+    sum-=(max+min);
+    average=sum/5.0;
+}
+
+int main(){
+    int n;
+    string school,num,name;
+    win>>n;
+    Person *per[n];
+    
+    for(int i=0;i<n;i++){
+        win>>school>>num>>name;
+        per[i] = new Person(school,num,name);
+    }
+    
+    for(int i=0;i<n-1;i++){
+        for(int j=0;j<n-1;j++){
+            if(per[j]->average<per[j+1]->average){
+                Person *tper=per[j+1];
+                per[j+1]=per[j];
+                per[j]=tper;
+            }
+        }
+    }
+    
+    for(int i=0;i<n;i++){
+        per[i]->display();
+    }
 }
